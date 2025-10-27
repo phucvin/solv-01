@@ -145,7 +145,9 @@ function counter(state, action) {
           'button',
           {
             class:
-              'bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-full text-2xl',
+              'bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed ' +
+              'text-white font-bold py-2 px-4 rounded-full text-2xl',
+            disabled: state.count == 0 ? true : undefined,
             onclick: state.count > 0 ? { t: 'RESET' } : undefined,
           },
           [text('reset')]
