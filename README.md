@@ -1,5 +1,8 @@
-# solv-01
+# Stateless Offline-capable LiveView (Solv) Prototype 01
 
 [Edit in StackBlitz next generation editor ⚡️](https://stackblitz.com/~/github.com/phucvin/solv-01)
 
-Stateless Offline-capable LiveView (Solv) Prototype 01
+To run:
+```
+node t02.js
+```
