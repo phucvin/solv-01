@@ -1,21 +1,26 @@
 import http from 'http';
 import fs from 'fs';
 
-import { assert } from './shared01.js';
 import { diffList, createRenderContext, ssr } from './server01.js';
 
 import { render, initState } from './counter01/app.js';
+import { assert } from 'console';
 
-let server_state = initState('SERVER');
-let server_vdom = render(server_state, null, createRenderContext());
+let solvDb = {};
+let solvDbNextCid = 1;
 
 async function serveIndex(req, res) {
+    const cid = '_' + solvDbNextCid++;
+    console.log('CID', cid);
+    solvDb[cid] = { state: initState('SERVER') };
+    solvDb[cid].vdom = render(solvDb[cid].state, null, createRenderContext());
+    
     try {
         let html = await fs.promises.readFile('./index01.html', 'utf8');
-        html = html.split('$$$SSR$$$');
-        assert(html.length == 2, html);
+        html = html.replace('$$$SOLV_SSR$$$', ssr(solvDb[cid].vdom));
+        html = html.replace('$$$SOLV_CID$$$', cid);
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html[0] + ssr(server_vdom) + html[1]);
+        res.end(html);
     } catch (err) {
         console.error('Error reading index html and injecting SSR:', err);
         res.writeHead(500, { 'Content-Type': 'text/html' });
@@ -31,11 +36,12 @@ function serveAction(req, res) {
     });
     req.on('end', () => {
         action = JSON.parse(action);
+        assert(action.cid !== undefined, 'missing CID');
         console.log('action', action);
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        const new_vdom = render(server_state, action, createRenderContext());
-        res.end(JSON.stringify(diffList(server_vdom, new_vdom)));
-        server_vdom = new_vdom;
+        const vdom = render(solvDb[action.cid].state, action, createRenderContext());
+        res.end(JSON.stringify(diffList(solvDb[action.cid].vdom, vdom)));
+        solvDb[action.cid].vdom = vdom;
     });
 }
 

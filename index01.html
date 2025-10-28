@@ -1,8 +1,10 @@
 <html>
 
-$$$SSR$$$
+$$$SOLV_SSR$$$
 
 <script>
+    const SOLV_CID = '$$$SOLV_CID$$$';
+
     function assert(predicate, ...args) {
         if (!predicate) {
             console.error(...args);
@@ -149,6 +151,7 @@ $$$SSR$$$
 
     async function dispatch(action) {
         executeActionJs(action);
+        action.cid = SOLV_CID;
 
         try {
             const res = await fetch('/action', { method: 'POST', body: JSON.stringify(action) });
