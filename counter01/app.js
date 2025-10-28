@@ -4,6 +4,8 @@ export function initState(id) {
     return { count: 1 };
 }
 
+let serverTotalInc = 0;
+
 export function render(state, action, context) {
     let justReset = false;
 
@@ -14,6 +16,7 @@ export function render(state, action, context) {
                 modifiers = 2;
             }
             state.count += action.p.delta * modifiers;
+            serverTotalInc += action.p.delta * modifiers;
             break;
         case 'RESET':
             justReset = true;
@@ -73,6 +76,7 @@ export function render(state, action, context) {
                         placeholder: 'Modifiers',
                         value: justReset ? '' : undefined,
                     }, []),
+                    h('h3', {}, [text(`Server's Total Inc: ${serverTotalInc}`)]),
                 ]
             ),
         ]),
