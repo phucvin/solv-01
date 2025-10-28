@@ -6,3 +6,8 @@ To run:
 ```
 node index.js
 ```
+
+TODOs:
+- Pull update
+- Get CID from index's query param
+- Persist state & vdom to sqlite
