@@ -22,7 +22,11 @@ $$$SOLV_SSR$$$
     }
 
     function removeProperty(prop, el) {
-        el[prop] = undefined;
+        if (el.tagName == 'INPUT' && prop == 'value') {
+            el[prop] = '';
+        } else {
+            el[prop] = undefined;
+        }
         el.removeAttribute(prop);
     }
 

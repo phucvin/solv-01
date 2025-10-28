@@ -1,12 +1,12 @@
 import { h, text } from './../shared01.js';
 
-export function initState(cid, iid, props = { startCount: 0 }) {
-    return { iid, count: props.startCount };
+export function initState(cid, /*props*/ { startCount = 0 } = {}) {
+    return { count: startCount };
 }
 
-export function render(state, action, context) {
-    const INC = `_${state.iid}_INC`;
-    const RESET = `_${state.iid}_RESET`;
+export function render(state, action, context, /*props*/ { iid }) {
+    const INC = `_${iid}_INC`;
+    const RESET = `_${iid}_RESET`;
 
     let justReset = false;
 
@@ -69,7 +69,7 @@ export function render(state, action, context) {
                     class: 'bg-gray-50 border border-gray-300',
                     style: 'text-align: center',
                     placeholder: 'Modifiers',
-                    value: justReset ? '' : undefined,
+                    value: justReset ? '<just reseted>' : undefined,
                 }, []),
             ]
         ),
