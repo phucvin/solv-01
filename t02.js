@@ -31,6 +31,7 @@ function serveAction(req, res) {
     });
     req.on('end', () => {
         action = JSON.parse(action);
+        console.log('action', action);
         res.writeHead(200, { 'Content-Type': 'application/json' });
         const new_vdom = render(server_state, action, createRenderContext());
         res.end(JSON.stringify(diffList(server_vdom, new_vdom)));

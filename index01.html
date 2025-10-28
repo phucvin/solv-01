@@ -131,9 +131,27 @@ $$$SSR$$$
         });
     }
 
-    async function dispatch(data) {
+    function executeActionJs(obj) {
+        for (const key in obj) {
+            // Ensure the property belongs to the object itself, not its prototype chain
+            if (!Object.prototype.hasOwnProperty.call(obj, key)) {
+                continue;
+            }
+
+            const value = obj[key];
+            if (typeof value === 'object' && value !== null) {
+                executeActionJs(value);
+            } else if (typeof value === 'string' && value.startsWith('JS:')) {
+                obj[key] = eval(value.substring(3));
+            }
+        }
+    }
+
+    async function dispatch(action) {
+        executeActionJs(action);
+
         try {
-            const res = await fetch('/action', { method: 'POST', body: JSON.stringify(data) });
+            const res = await fetch('/action', { method: 'POST', body: JSON.stringify(action) });
             const diff = await res.json();
             console.log('diff:', JSON.stringify(diff, null, 2));
             apply(document.childNodes[0], diff);
