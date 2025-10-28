@@ -84,16 +84,17 @@ function ssr(vdom) {
   } else if (vdom.tag) {
     let properties = '';
     for (const prop in vdom.properties) {
-      if (vdom.properties[prop] === undefined) {
+      const prop_val = vdom.properties[prop];
+      if (prop_val === undefined) {
         continue;
       }
       const event = eventName(prop);
       if (event) {
-        properties += ` ${prop}='dispatch(${JSON.stringify(
-          vdom.properties[prop]
-        )})'`;
+        properties += ` ${prop}='dispatch(${JSON.stringify(prop_val)})'`;
+      } else if (prop_val === true) {
+        properties += ` ${prop}`;
       } else {
-        properties += ` ${prop}="${vdom.properties[prop]}"`;
+        properties += ` ${prop}="${prop_val}"`;
       }
     }
     if (vdom.children.length > 0) {
@@ -152,6 +153,7 @@ function counter(state, action) {
           },
           [text('reset')]
         ),
+        h('input', { id: 'TODO#1', type: 'checkbox', checked: state.count >  0 ? true : undefined }, []),
       ]
     ),
   ]);
