@@ -8,5 +8,6 @@ node index.js
 ```
 
 TODOs:
+- List of counter components, with add & remove buttons
 - Get CID from index's query param
 - Persist state & vdom to sqlite
