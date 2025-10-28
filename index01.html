@@ -1,0 +1,137 @@
+<html>
+
+$$$SSR$$$
+
+<script>
+    function assert(predicate, ...args) {
+        if (!predicate) {
+            console.error(...args);
+            throw new Error('fatal');
+        }
+    }
+
+    function setProperty(prop, value, el) {
+        if (value === true) {
+            el.setAttribute(prop, "");
+        } else {
+            el.setAttribute(prop, value);
+        }
+        el[prop] = value;
+    }
+
+    function removeProperty(prop, el) {
+        el.removeAttribute(prop);
+        el[prop] = undefined;
+    }
+
+    function setListener(el, event, handle) {
+        el.setAttribute('on' + event, 'dispatch(' + JSON.stringify(handle) + ')');
+    }
+
+    function eventName(str) {
+        if (str.indexOf('on') == 0) {
+            return str.slice(2).toLowerCase();
+        }
+        return null;
+    }
+
+    function create(vnode) {
+        if (vnode.text !== undefined) {
+            const el = document.createTextNode(vnode.text);
+            return el;
+        }
+
+        const el = document.createElement(vnode.tag);
+
+        for (const prop in vnode.properties) {
+            const event = eventName(prop);
+            const value = vnode.properties[prop];
+            event === null
+                ? setProperty(prop, value, el)
+                : setListener(el, event, value);
+        }
+
+        for (const childVNode of vnode.children) {
+            const child = create(childVNode);
+            el.appendChild(child);
+        }
+
+        return el;
+    }
+
+    function modify(el, diff) {
+        for (const prop of diff.remove) {
+            const event = eventName(prop);
+            if (event === null) {
+                removeProperty(prop, el);
+            } else {
+                el.removeAttribute('on' + event);
+            }
+        }
+
+        for (const prop in diff.set) {
+            const value = diff.set[prop];
+            const event = eventName(prop);
+            event === null
+                ? setProperty(prop, value, el)
+                : setListener(el, event, value);
+        }
+
+        
+        apply(el, diff.children);
+    }
+
+    function apply(el, childrenDiff) {
+        const children = Array.from(el.childNodes);
+
+        childrenDiff.forEach((diff, i) => {
+            const action = Object.keys(diff)[0];
+            switch (action) {
+                case 'remove':
+                    children[i].remove();
+                    break;
+
+                case 'modify':
+                    modify(children[i], diff.modify);
+                    break;
+
+                case 'create': {
+                    assert(
+                        i >= children.length,
+                        'adding to the middle of children',
+                        i,
+                        children.length
+                    );
+                    const child = create(diff.create);
+                    el.appendChild(child);
+                    break;
+                }
+
+                case 'replace': {
+                    const child = create(diff.replace);
+                    children[i].replaceWith(child);
+                    break;
+                }
+
+                case 'noop':
+                    break;
+
+                default:
+                    throw new Error('Unexpected diff option: ' + Object.keys(diff));
+            }
+        });
+    }
+
+    async function dispatch(data) {
+        try {
+            const res = await fetch('/action', { method: 'POST', body: JSON.stringify(data) });
+            const diff = await res.json();
+            console.log('diff:', JSON.stringify(diff/*, null, 2*/));
+            apply(document.childNodes[0], diff);
+        } catch (error) {
+            console.error('Error dispatching', error);
+        }
+    }
+</script>
+
+</html>
