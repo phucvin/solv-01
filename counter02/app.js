@@ -15,7 +15,7 @@ export function render(state, action, context) {
             h('title', {}, [text('Counter 02 - Solv Prototype')]),
             h('script', { src: "https://cdn.tailwindcss.com" }, [text('')]),
         ]),
-        h('body', { class: "flex items-center justify-center min-h-screen bg-gray-100" }, [
+        h('body', { class: "flex flex-col space-y-4 items-center justify-center min-h-screen bg-gray-100" }, [
             ...counter.render(state.c1, action, context),
             ...counter.render(state.c2, action, context),
         ]),
