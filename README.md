@@ -4,5 +4,5 @@
 
 To run:
 ```
-node t02.js
+node index.js
 ```
