@@ -1,21 +1,24 @@
 import { h, text } from './../shared01.js';
 
-export function initState(cid, { startCount = 0 }) {
-    return { count: startCount };
+export function initState(cid, iid, { startCount = 0 }) {
+    return { iid, count: startCount };
 }
 
 export function render(state, action, context) {
+    const INC = `_${state.iid}_INC`;
+    const RESET = `_${state.iid}_RESET`;
+
     let justReset = false;
 
     switch (action?.t) {
-        case 'INC':
+        case INC:
             let modifiers = 1;
             if (action.p.modifiers === '*2') {
                 modifiers = 2;
             }
             state.count += action.p.delta * modifiers;
             break;
-        case 'RESET':
+        case RESET:
             state.count = 0;
             justReset = true;
             break;
@@ -41,7 +44,7 @@ export function render(state, action, context) {
                         class:
                             'bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-2xl',
                         onclick: {
-                            t: 'INC', p: {
+                            t: INC, p: {
                                 delta: 1,
                                 modifiers: `JS:document.getElementById("${modifiersId}").value || undefined`,
                             }
@@ -56,7 +59,7 @@ export function render(state, action, context) {
                             'bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed ' +
                             'text-white font-bold py-2 px-4 rounded-full text-2xl',
                         disabled: state.count == 0,
-                        onclick: state.count > 0 ? { t: 'RESET' } : undefined,
+                        onclick: state.count > 0 ? { t: RESET } : undefined,
                     },
                     [text('reset')]
                 ),

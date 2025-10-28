@@ -8,6 +8,5 @@ node index.js
 ```
 
 TODOs:
-- Components
 - Get CID from index's query param
 - Persist state & vdom to sqlite
