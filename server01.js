@@ -10,19 +10,20 @@ function eventName(str) {
 export function diffOne(l, r) {
     const isText = l.text !== undefined;
     if (isText) {
-        return l.text !== r.text ? { replace: r } : { noop: true };
+        return l.text !== r.text ? { r: r } /*replace*/ : { /*noop*/ };
     }
 
     if (l.tag !== r.tag) {
-        return { replace: r };
+        return { r: r };  // replace
     }
 
-    const remove = [];
-    const set = {};
+    let remove = [];
+    let set = {};
 
     for (const prop in l.properties) {
+        const l_prop_val = l.properties[prop];
         const r_prop_val = r.properties[prop];
-        if (r_prop_val === undefined || r_prop_val === false) {
+        if ((r_prop_val === undefined || r_prop_val === false) && l_prop_val) {
             remove.push(prop);
         }
     }
@@ -39,14 +40,26 @@ export function diffOne(l, r) {
         }
     }
 
-    const children = diffList(l.children, r.children);
-    const noChildrenChange = children.every((e) => e.noop);
-    const noPropertyChange =
-        remove.length === 0 && Array.from(Object.keys(set)).length == 0;
+    const childrenDiff = diffList(l.children, r.children);
+    const noChildrenChange = childrenDiff.every((e) => Object.keys(e).length == 0);
+    const noRemove = remove.length == 0;
+    const noSet = Array.from(Object.keys(set)).length == 0;
 
-    return noChildrenChange && noPropertyChange
-        ? { noop: true }
-        : { modify: { remove, set, children } };
+    if (noChildrenChange && noRemove && noSet) {
+        return { /*noop*/ };
+    } else {
+        const modify = {};
+        if (!noRemove) {
+            modify.d = remove;  // delete/remove
+        }
+        if (!noSet) {
+            modify.s = set;  // set
+        }
+        if (!noChildrenChange) {
+            modify.c = childrenDiff;  // children
+        }
+        return { m: modify };  // modify
+    }
 }
 
 export function diffList(ls, rs) {
@@ -54,9 +67,9 @@ export function diffList(ls, rs) {
     const length = Math.max(ls.length, rs.length);
     return Array.from({ length }).map((_, i) =>
         ls[i] === undefined
-            ? { create: rs[i] }
+            ? { n: rs[i] }  // new/create
             : rs[i] == undefined
-                ? { remove: true }
+                ? { d: true }  // delete
                 : diffOne(ls[i], rs[i])
     );
 }

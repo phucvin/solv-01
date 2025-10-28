@@ -60,28 +60,34 @@ $$$SSR$$$
     }
 
     function modify(el, diff) {
-        for (const prop of diff.remove) {
-            const event = eventName(prop);
-            if (event === null) {
-                removeProperty(prop, el);
-            } else {
-                el.removeAttribute('on' + event);
+        if (diff.d) {  // delete/remove
+            for (const prop of diff.d) {
+                const event = eventName(prop);
+                if (event === null) {
+                    removeProperty(prop, el);
+                } else {
+                    el.removeAttribute('on' + event);
+                }
             }
         }
 
-        for (const prop in diff.set) {
-            const value = diff.set[prop];
-            const event = eventName(prop);
-            event === null
-                ? setProperty(prop, value, el)
-                : setListener(el, event, value);
+        if (diff.s) {  // set
+            for (const prop in diff.s) {
+                const value = diff.s[prop];
+                const event = eventName(prop);
+                event === null
+                    ? setProperty(prop, value, el)
+                    : setListener(el, event, value);
+            }
         }
 
-        assert(
-            el.tagName === 'BODY' || el.tagName === 'HEAD' || diff.children.length >= el.childNodes.length,
-            'unmatched children lengths for tag:', el.tagName
-        );
-        apply(el, diff.children);
+        if (diff.c) {  // children
+            assert(
+                el.tagName === 'BODY' || el.tagName === 'HEAD' || diff.c.length >= el.childNodes.length,
+                'unmatched children lengths for tag:', el.tagName
+            );
+            apply(el, diff.c);
+        }
     }
 
     function apply(el, childrenDiff) {
@@ -90,33 +96,33 @@ $$$SSR$$$
         childrenDiff.forEach((diff, i) => {
             const action = Object.keys(diff)[0];
             switch (action) {
-                case 'remove':
+                case 'd':  // delete/remove
                     children[i].remove();
                     break;
 
-                case 'modify':
-                    modify(children[i], diff.modify);
+                case 'm':  // modify
+                    modify(children[i], diff.m);
                     break;
 
-                case 'create': {
+                case 'n': {  // new/create
                     assert(
                         i >= children.length,
                         'adding to the middle of children',
                         i,
                         children.length
                     );
-                    const child = create(diff.create);
+                    const child = create(diff.n);
                     el.appendChild(child);
                     break;
                 }
 
-                case 'replace': {
-                    const child = create(diff.replace);
+                case 'r': {  // replace
+                    const child = create(diff.r);
                     children[i].replaceWith(child);
                     break;
                 }
 
-                case 'noop':
+                case undefined:  // noop
                     break;
 
                 default:
@@ -129,7 +135,7 @@ $$$SSR$$$
         try {
             const res = await fetch('/action', { method: 'POST', body: JSON.stringify(data) });
             const diff = await res.json();
-            console.log('diff:', JSON.stringify(diff/*, null, 2*/));
+            console.log('diff:', JSON.stringify(diff, null, 2));
             apply(document.childNodes[0], diff);
         } catch (error) {
             console.error('Error dispatching', error);
