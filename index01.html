@@ -6,7 +6,7 @@ $$$SSR$$$
     function assert(predicate, ...args) {
         if (!predicate) {
             console.error(...args);
-            throw new Error('fatal');
+            throw new Error('Assertion error, check console.');
         }
     }
 
@@ -77,7 +77,10 @@ $$$SSR$$$
                 : setListener(el, event, value);
         }
 
-        
+        assert(
+            el.tagName === 'BODY' || el.tagName === 'HEAD' || diff.children.length >= el.childNodes.length,
+            'unmatched children lengths for tag:', el.tagName
+        );
         apply(el, diff.children);
     }
 
