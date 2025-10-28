@@ -48,7 +48,7 @@ export function render(state, action, context) {
                             onclick: {
                                 t: 'INC', p: {
                                     delta: 1,
-                                    modifiers: `JS:document.getElementById("${modifiersId}").value`,
+                                    modifiers: `JS:document.getElementById("${modifiersId}").value || undefined`,
                                 }
                             },
                         },
