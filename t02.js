@@ -2,12 +2,12 @@ import http from 'http';
 import fs from 'fs';
 
 import { assert } from './shared01.js';
-import { diffList, ssr } from './server01.js';
+import { diffList, createRenderContext, ssr } from './server01.js';
 
 import { render, initState } from './counter01/app.js';
 
 let server_state = initState('SERVER');
-let server_vdom = render(server_state);
+let server_vdom = render(server_state, null, createRenderContext());
 
 async function serveIndex(req, res) {
     try {
@@ -15,7 +15,7 @@ async function serveIndex(req, res) {
         html = html.split('$$$SSR$$$');
         assert(html.length == 2, html);
         res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html[0] + ssr(render(server_state)) + html[1]);
+        res.end(html[0] + ssr(server_vdom) + html[1]);
     } catch (err) {
         console.error('Error reading index html and injecting SSR:', err);
         res.writeHead(500, { 'Content-Type': 'text/html' });
@@ -25,14 +25,14 @@ async function serveIndex(req, res) {
 }
 
 function serveAction(req, res) {
-    let data = '';
+    let action = '';
     req.on('data', (chunk) => {
-        data += chunk;
+        action += chunk;
     });
     req.on('end', () => {
-        data = JSON.parse(data);
+        action = JSON.parse(action);
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        const new_vdom = render(server_state, data);
+        const new_vdom = render(server_state, action, createRenderContext());
         res.end(JSON.stringify(diffList(server_vdom, new_vdom)));
         server_vdom = new_vdom;
     });

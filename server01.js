@@ -74,6 +74,15 @@ export function diffList(ls, rs) {
     );
 }
 
+export function createRenderContext() {
+    return {
+        _nextId: 1,
+        nextId: function () {
+            return `solv-${this._nextId++}`;
+        },
+    };
+}
+
 export function ssr(vdom) {
     if (vdom instanceof Array) {
         let children = '';

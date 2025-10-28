@@ -4,20 +4,22 @@ export function initState(id) {
     return { count: 1 };
 }
 
-export function render(state, action) {
+export function render(state, action, context) {
     switch (action?.t) {
         case 'INC':
-            state.count += action.p;
+            state.count += action.p.delta;
             break;
         case 'RESET':
             state.count = 0;
             break;
     }
 
+    const modifiersId = context.nextId();
+
     return [
         h('head', {}, [
-            h('title', {}, [ text((state.count == 0 ? 'RESETED - ' : '') + 'Counter 01 - Solv Prototype')]),
-            h('script', { src: "https://cdn.tailwindcss.com" }, [ text('') ]),
+            h('title', {}, [text((state.count == 0 ? 'RESETED - ' : '') + 'Counter 01 - Solv Prototype')]),
+            h('script', { src: "https://cdn.tailwindcss.com" }, [text('')]),
         ]),
         h('body', { class: "flex items-center justify-center min-h-screen bg-gray-100" }, [
             h(
@@ -36,7 +38,12 @@ export function render(state, action) {
                         {
                             class:
                                 'bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-2xl',
-                            onclick: { t: 'INC', p: 1 },
+                            onclick: {
+                                t: 'INC', p: {
+                                    delta: 1,
+                                    modifiers: `JS:document.getElementById(${modifiersId}).value`,
+                                }
+                            },
                         },
                         [text('inc')]
                     ),
@@ -51,7 +58,13 @@ export function render(state, action) {
                         },
                         [text('reset')]
                     ),
-                    h('input', { id: 'TODO#1', type: 'checkbox', checked: state.count > 0 }, []),
+                    h('input', {
+                        id: modifiersId,
+                        type: 'text',
+                        class: 'bg-gray-50 border border-gray-300',
+                        style: 'text-align: center',
+                        placeholder: 'Modifiers'
+                    }, []),
                 ]
             ),
         ]),
