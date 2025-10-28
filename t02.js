@@ -244,6 +244,8 @@ const props = new Set([
 function setProperty(prop, value, el) {
   if (props.has(prop)) {
     el[prop] = value;
+  } else if (value === true) {
+    el.setAttribute(prop, "");
   } else {
     el.setAttribute(prop, value);
   }
