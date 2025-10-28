@@ -3,7 +3,7 @@ import fs from 'fs';
 
 import { diffList, createRenderContext, ssr } from './server01.js';
 
-import { render, initState } from './counter01/app.js';
+import { render, initState } from './counter02/app.js';
 import { assert } from 'console';
 
 let solvDb = {};
