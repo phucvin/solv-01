@@ -181,70 +181,8 @@ function assert(predicate, ...args) {
   }
 }
 
-const props = new Set([
-  'autoplay',
-  'checked',
-  'checked',
-  'contentEditable',
-  'controls',
-  'default',
-  'hidden',
-  'loop',
-  'selected',
-  'spellcheck',
-  'value',
-  'id',
-  'title',
-  'accessKey',
-  'dir',
-  'dropzone',
-  'lang',
-  'src',
-  'alt',
-  'preload',
-  'poster',
-  'kind',
-  'label',
-  'srclang',
-  'sandbox',
-  'srcdoc',
-  'type',
-  'value',
-  'accept',
-  'placeholder',
-  'acceptCharset',
-  'action',
-  'autocomplete',
-  'enctype',
-  'method',
-  'name',
-  'pattern',
-  'htmlFor',
-  'max',
-  'min',
-  'step',
-  'wrap',
-  'useMap',
-  'shape',
-  'coords',
-  'align',
-  'cite',
-  'href',
-  'target',
-  'download',
-  'download',
-  'hreflang',
-  'ping',
-  'start',
-  'headers',
-  'scope',
-  'span',
-]);
-
 function setProperty(prop, value, el) {
-  if (props.has(prop)) {
-    el[prop] = value;
-  } else if (value === true) {
+  if (value === true) {
     el.setAttribute(prop, "");
   } else {
     el.setAttribute(prop, value);
