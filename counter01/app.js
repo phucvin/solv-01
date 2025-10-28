@@ -5,11 +5,18 @@ export function initState(id) {
 }
 
 export function render(state, action, context) {
+    let justReset = false;
+
     switch (action?.t) {
         case 'INC':
-            state.count += action.p.delta;
+            let modifiers = 1;
+            if (action.p.modifiers === '*2') {
+                modifiers = 2;
+            }
+            state.count += action.p.delta * modifiers;
             break;
         case 'RESET':
+            justReset = true;
             state.count = 0;
             break;
     }
@@ -18,7 +25,7 @@ export function render(state, action, context) {
 
     return [
         h('head', {}, [
-            h('title', {}, [text((state.count == 0 ? 'RESETED - ' : '') + 'Counter 01 - Solv Prototype')]),
+            h('title', {}, [text((justReset ? 'RESETED - ' : '') + 'Counter 01 - Solv Prototype')]),
             h('script', { src: "https://cdn.tailwindcss.com" }, [text('')]),
         ]),
         h('body', { class: "flex items-center justify-center min-h-screen bg-gray-100" }, [
@@ -63,7 +70,8 @@ export function render(state, action, context) {
                         type: 'text',
                         class: 'bg-gray-50 border border-gray-300',
                         style: 'text-align: center',
-                        placeholder: 'Modifiers'
+                        placeholder: 'Modifiers',
+                        value: justReset ? '' : undefined,
                     }, []),
                 ]
             ),
