@@ -24,6 +24,7 @@ export function render(state, action, context) {
             break;
     }
 
+    const testId = state.count > 5 ? context.nextId() : undefined;
     const modifiersId = context.nextId();
 
     return [
@@ -35,6 +36,7 @@ export function render(state, action, context) {
             h(
                 'div',
                 {
+                    id: testId,
                     class:
                         'bg-white p-8 rounded-lg shadow-md flex flex-col items-center space-x-4 space-y-4',
                 },

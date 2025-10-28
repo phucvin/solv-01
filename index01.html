@@ -22,8 +22,8 @@ $$$SOLV_SSR$$$
     }
 
     function removeProperty(prop, el) {
-        el.removeAttribute(prop);
         el[prop] = undefined;
+        el.removeAttribute(prop);
     }
 
     function setListener(el, event, handle) {
