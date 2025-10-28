@@ -192,6 +192,12 @@ function setProperty(prop, value, el) {
   } else {
     el.setAttribute(prop, value);
   }
+  el[prop] = value;
+}
+
+function removeProperty(prop, el) {
+  el.removeAttribute(prop);
+  el[prop] = undefined;
 }
 
 function setListener(el, event, handle) {
@@ -233,7 +239,7 @@ function modify(el, diff) {
   for (const prop of diff.remove) {
     const event = eventName(prop);
     if (event === null) {
-      el.removeAttribute(prop);
+      removeProperty(prop, el);
     } else {
       el.removeAttribute('on' + event);
     }
