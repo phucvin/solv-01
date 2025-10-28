@@ -162,6 +162,9 @@ $$$SOLV_SSR$$$
             console.error('Error dispatching', error);
         }
     }
+
+    // Pull latest (also keep alive) from server every 5s
+    setInterval(() => dispatch({t: 'KEEP_ALIVE'}), 5000);
 </script>
 
 </html>
