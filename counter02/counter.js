@@ -1,7 +1,7 @@
 import { h, text } from './../shared01.js';
 
-export function initState(cid, iid, { startCount = 0 }) {
-    return { iid, count: startCount };
+export function initState(cid, iid, props = { startCount: 0 }) {
+    return { iid, count: props.startCount };
 }
 
 export function render(state, action, context) {

@@ -4,8 +4,8 @@ import * as counter from './counter.js';
 export function initState(cid) {
     return {
         cid,
-        c1: counter.initState(cid, 1, { count: 1 }),
-        c2: counter.initState(cid, 2, { count: 1 }),
+        c1: counter.initState(cid, 1 /*iid*/, { startCount: 1 }),
+        c2: counter.initState(cid, 2 /*iid*/, { startCount: 2 }),
     };
 }
 
