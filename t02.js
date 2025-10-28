@@ -43,16 +43,21 @@ function diffOne(l, r) {
   const set = {};
 
   for (const prop in l.properties) {
-    if (r.properties[prop] === undefined) {
+    const r_prop_val = r.properties[prop];
+    if (r_prop_val === undefined || r_prop_val === false) {
       remove.push(prop);
     }
   }
 
   for (const prop in r.properties) {
+    const r_prop_val = r.properties[prop];
+    if (r_prop_val === undefined || r_prop_val === false) {
+      continue;
+    }
     if (
-      JSON.stringify(r.properties[prop]) !== JSON.stringify(l.properties[prop])
+      JSON.stringify(r_prop_val) !== JSON.stringify(l.properties[prop])
     ) {
-      set[prop] = r.properties[prop];
+      set[prop] = r_prop_val;
     }
   }
 
@@ -85,7 +90,7 @@ function ssr(vdom) {
     let properties = '';
     for (const prop in vdom.properties) {
       const prop_val = vdom.properties[prop];
-      if (prop_val === undefined) {
+      if (prop_val === undefined || prop_val === false) {
         continue;
       }
       const event = eventName(prop);
@@ -148,12 +153,12 @@ function counter(state, action) {
             class:
               'bg-red-500 hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed ' +
               'text-white font-bold py-2 px-4 rounded-full text-2xl',
-            disabled: state.count == 0 ? true : undefined,
+            disabled: state.count == 0,
             onclick: state.count > 0 ? { t: 'RESET' } : undefined,
           },
           [text('reset')]
         ),
-        h('input', { id: 'TODO#1', type: 'checkbox', checked: state.count >  0 ? true : undefined }, []),
+        h('input', { id: 'TODO#1', type: 'checkbox', checked: state.count >  0 }, []),
       ]
     ),
   ]);
