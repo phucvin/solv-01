@@ -1,10 +1,16 @@
 import { h, text } from './../shared01.js';
 
-export function initState(id) {
-    return { count: 1 };
+function getRandomInteger(min, max) {
+    min = Math.ceil(min); // Ensure min is an integer
+    max = Math.floor(max); // Ensure max is an integer
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
 let serverTotalInc = 0;
+
+export function initState(cid) {
+    return { cid, count: getRandomInteger(0, 10) };
+}
 
 export function render(state, action, context) {
     let justReset = false;

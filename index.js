@@ -11,8 +11,7 @@ let solvDbNextCid = 1;
 
 async function serveIndex(req, res) {
     const cid = '_' + solvDbNextCid++;
-    console.log('CID', cid);
-    solvDb[cid] = { state: initState('SERVER') };
+    solvDb[cid] = { state: initState(cid) };
     solvDb[cid].vdom = render(solvDb[cid].state, null, createRenderContext());
     
     try {
