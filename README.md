@@ -9,7 +9,7 @@ node index.js
 
 TODOs:
 - Smarter patching using children key
-- Start offline-capable
+- Start offline-capable, probably with https://www.instantdb.com/
 - Use generator for render (like https://crank.js.org/)
 - Signals for render
 
