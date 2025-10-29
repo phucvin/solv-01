@@ -16,15 +16,20 @@ export function initState(context) {
 
 export async function render(state, action, context) {
     const ADD_TODO = 'ADD_TODO';
+    const TASK_ADD_TODO = 'TASK_ADD_TODO';
 
+    let adding = false;
     switch (action?.t) {
         case ADD_TODO:
-            await db.transact([db.tx.todos[id()].create({
+            context.addTask(TASK_ADD_TODO, db.transact([db.tx.todos[id()].create({
                 text: 'First one',
                 done: false,
                 createdAt: Date.now(),
-            })]);
+            })]));
+            adding = true;
             break;
+        case 'SOLV_STREAMING':
+            await context.getTaskIfAny(TASK_ADD_TODO);
     }
 
     let todos = [];
@@ -45,9 +50,9 @@ export async function render(state, action, context) {
             h('div', { class: "space-y-4", }, todos),
             h('button', {
                 class:
-                    'bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-full text-2xl',
-                onclick: { t: ADD_TODO },
-            }, [text('Add Todo')]),
+                    'text-white font-bold py-2 px-4 rounded-full text-2xl ' + (adding ? 'bg-gray-500' : 'bg-green-500 hover:bg-green-600'),
+                onclick: adding ? undefined : { t: ADD_TODO },
+            }, [text(adding ? 'Adding...' : 'Add Todo')]),
         ]),
     ];
 }
