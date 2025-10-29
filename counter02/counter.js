@@ -7,6 +7,7 @@ export function initState(/*props*/ { startCount = 0 } = {}) {
 export async function render(state, action, context, /*props*/ { iid }) {
     const INC = `_${iid}_INC`;
     const RESET = `_${iid}_RESET`;
+    const TASK1 = `_${iid}_task1`;
 
     let justReset = false;
 
@@ -21,10 +22,16 @@ export async function render(state, action, context, /*props*/ { iid }) {
         case RESET:
             state.count = 0;
             justReset = true;
-            context.streaming = true;
+            context.streaming += 1;
+            console.log('counter reset', context);
+            context[TASK1] = new Promise((resolve) => setTimeout(resolve, 2000));
             break;
         default:
-            context.streaming = false;
+            if (context[TASK1]) {
+                await context[TASK1];
+                context.streaming -= 1;
+                console.log('task 1 done');
+            }
             break;
     }
 

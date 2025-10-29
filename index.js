@@ -83,7 +83,8 @@ function serveAction(req, res) {
                     res.write('CHUNK_BEGIN\n');
                     res.write(diff);
                     res.write('\nCHUNK_END\n');
-                } while (context.streaming);
+                    console.log('action', context);
+                } while (context.streaming > 0);
 
                 state = JSON.stringify(state);
                 vdom = JSON.stringify(vdom);
