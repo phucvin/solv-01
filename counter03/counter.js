@@ -21,6 +21,7 @@ export async function render(state, action, context, /*props*/ { iid, title, rem
         h(
             'div',
             {
+                _SOLV_KEY: `_${iid}`,
                 class:
                     'relative bg-white p-8 rounded-lg shadow-md flex flex-col items-center space-x-4 space-y-4',
             },

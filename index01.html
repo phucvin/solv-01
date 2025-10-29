@@ -99,11 +99,14 @@ $$$SOLV_SSR$$$
     function apply(el, childrenDiff) {
         const children = Array.from(el.childNodes);
 
+        let deletedCount = 0;
         childrenDiff.forEach((diff, i) => {
+            i -= deletedCount;
             const action = Object.keys(diff)[0];
             switch (action) {
                 case 'd':  // delete/remove
                     children[i].remove();
+                    deletedCount += 1;
                     break;
 
                 case 'm':  // modify

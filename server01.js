@@ -65,13 +65,44 @@ export function diffOne(l, r) {
 export function diffList(ls, rs) {
     assert(rs instanceof Array, 'Expected an array, found', rs);
     const length = Math.max(ls.length, rs.length);
-    return Array.from({ length }).map((_, i) =>
-        ls[i] === undefined
-            ? { n: rs[i] }  // new/create
-            : rs[i] == undefined
-                ? { d: true }  // delete
-                : diffOne(ls[i], rs[i])
-    );
+
+    const getKeys = (s) => {
+        let keys = {};
+        for (const i in s) {
+            const k = s[i]?.properties?._SOLV_KEY;
+            if (k !== undefined) {
+                if (keys[k] !== undefined) {
+                    return {};
+                }
+                keys[k] = i;
+            }
+        }
+        return keys;
+    };
+    const lkeys = getKeys(ls);
+    const rkeys = getKeys(rs);
+    console.log(lkeys, rkeys);
+
+    let ld = 0, rd = 0;
+    return Array.from({ length }).map((_, i) => {
+        const l = ls[i + ld], r = rs[i + rd];
+        const lk = l?.properties?._SOLV_KEY;
+        const rk = r?.properties?._SOLV_KEY;
+        if (l === undefined) {
+            return { n: r };
+        } else if (r === undefined) {
+            return { d: true };
+        } else if (lk !== undefined && !(lk in rkeys)) {
+            rd -= 1;
+            return { d: true };
+        } else if (rk in lkeys) {
+            return diffOne(ls[lkeys[rk]], r);
+        } else if (lk in rkeys) {
+            return diffOne(l, rs[rkeys[lk]]);
+        } else {
+            return diffOne(l, r);
+        }
+    });
 }
 
 export function createRenderContext(solvState) {
