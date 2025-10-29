@@ -105,7 +105,7 @@ $$$SOLV_SSR$$$
             const action = Object.keys(diff)[0];
             switch (action) {
                 case 'd':  // delete/remove
-                    children[i].remove();
+                    children[i + deletedCount].remove();
                     deletedCount += 1;
                     break;
 
