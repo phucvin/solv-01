@@ -1,6 +1,6 @@
 import { h, text } from './../shared01.js';
 
-export function initState(cid, /*props*/ { startCount = 0 } = {}) {
+export function initState(/*props*/ { startCount = 0 } = {}) {
     return { count: startCount };
 }
 

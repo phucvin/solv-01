@@ -8,8 +8,8 @@ function getRandomInteger(min, max) {
 
 let serverTotalInc = 0;
 
-export function initState(cid) {
-    return { cid, count: getRandomInteger(0, 10) };
+export function initState() {
+    return { count: getRandomInteger(0, 10) };
 }
 
 export function render(state, action, context) {

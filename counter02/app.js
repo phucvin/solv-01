@@ -1,11 +1,10 @@
 import { h, text } from './../shared01.js';
 import * as counter from './counter.js';
 
-export function initState(cid) {
+export function initState() {
     return {
-        cid,
-        c1: { iid: 1, state: counter.initState(cid) },
-        c2: { iid: 2, state: counter.initState(cid, { startCount: 2 }) },
+        c1: { iid: 1, state: counter.initState() },
+        c2: { iid: 2, state: counter.initState({ startCount: 2 }) },
     };
 }
 

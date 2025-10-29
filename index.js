@@ -1,31 +1,58 @@
 import http from 'http';
 import fs from 'fs';
+import sqlite3 from 'sqlite3';
 
 import { diffList, createRenderContext, ssr } from './server01.js';
 
 import { render, initState } from './counter02/app.js';
 import { assert } from 'console';
 
-let solvDb = {};
-let solvDbNextCid = 1;
+const db = new sqlite3.Database('./counter02.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+    if (err) {
+        console.error(err.message);
+    } else {
+        const migrations = [
+            `CREATE TABLE IF NOT EXISTS clients(
+                cid INTEGER PRIMARY KEY AUTOINCREMENT,
+                state TEXT,vdom TEXT);`,
+            // `ALTER TABLE clients ADD COLUM test TEXT;`,
+        ];
+        for (const m of migrations) {
+            db.run(m, (err) => {
+                if (err) {
+                    console.log('DB migration error', m, err);
+                }
+            });
+        }
+    }
+});
 
 async function serveIndex(req, res) {
-    const cid = '_' + solvDbNextCid++;
-    solvDb[cid] = { state: initState(cid) };
-    solvDb[cid].vdom = render(solvDb[cid].state, null, createRenderContext());
-    
-    try {
-        let html = await fs.promises.readFile('./index01.html', 'utf8');
-        html = html.replace('$$$SOLV_SSR$$$', ssr(solvDb[cid].vdom));
-        html = html.replace('$$$SOLV_CID$$$', cid);
-        res.writeHead(200, { 'Content-Type': 'text/html' });
-        res.end(html);
-    } catch (err) {
-        console.error('Error reading index html and injecting SSR:', err);
-        res.writeHead(500, { 'Content-Type': 'text/html' });
-        res.end('<h1>Internal Error</h1>');
-    }
-    res.end(``);
+    const state = initState();
+    const vdom = render(state, null, createRenderContext());
+    db.run('INSERT INTO clients (state, vdom) VALUES (?, ?)',
+        [JSON.stringify(state), JSON.stringify(vdom)],
+        async function (err) {
+            if (err) {
+                console.error('Error insert into clients:', err);
+                res.writeHead(500, { 'Content-Type': 'text/html' });
+                res.end('<h1>Internal Error</h1>');
+            } else {
+                const cid = this.lastID;
+                try {
+                    let html = await fs.promises.readFile('./index01.html', 'utf8');
+                    html = html.replace('$$$SOLV_SSR$$$', ssr(vdom));
+                    html = html.replace('$$$SOLV_CID$$$', cid);
+                    res.writeHead(200, { 'Content-Type': 'text/html' });
+                    res.end(html);
+                } catch (err) {
+                    console.error('Error reading index html and injecting SSR:', err);
+                    res.writeHead(500, { 'Content-Type': 'text/html' });
+                    res.end('<h1>Internal Error</h1>');
+                }
+                res.end(``);
+            }
+        });
 }
 
 function serveAction(req, res) {
@@ -35,12 +62,33 @@ function serveAction(req, res) {
     });
     req.on('end', () => {
         action = JSON.parse(action);
-        assert(action.cid !== undefined, 'missing CID');
+        const cid = action.cid;
+        assert(cid !== undefined, 'missing CID');
         console.log('action', action);
-        res.writeHead(200, { 'Content-Type': 'application/json' });
-        const vdom = render(solvDb[action.cid].state, action, createRenderContext());
-        res.end(JSON.stringify(diffList(solvDb[action.cid].vdom, vdom)));
-        solvDb[action.cid].vdom = vdom;
+        db.get('SELECT state, vdom FROM clients WHERE cid = ?', [cid], (err, row) => {
+            if (err || !row) {
+                console.error('Error getting from clients with cid:', cid, err);
+                res.writeHead(500, { 'Content-Type': 'application/json' });
+                res.end('[]');
+            } else {
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                let state = JSON.parse(row.state);
+                let vdom = render(state, action, createRenderContext());
+                let diff = JSON.stringify(diffList(JSON.parse(row.vdom), vdom));
+                state = JSON.stringify(state);
+                vdom = JSON.stringify(vdom);
+                db.run('UPDATE clients SET state = ?, vdom = ? WHERE cid = ?', [state, vdom, cid], (err) => {
+                    if (err) {
+                        console.error('Error updating clients with cid:', cid, err);
+                        res.writeHead(500, { 'Content-Type': 'application/json' });
+                        res.end('[]');
+                    } else {
+                        res.end(diff);
+                    }
+                });
+
+            }
+        });
     });
 }
 

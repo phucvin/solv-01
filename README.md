@@ -8,7 +8,6 @@ node index.js
 ```
 
 TODOs:
-- Persist state & vdom to sqlite
 - List of counter components, with add & remove buttons
 - Start offline-capable
 - Maybe get CID from index's query param
