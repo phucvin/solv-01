@@ -11,7 +11,7 @@ TODOs:
 - List of counter components, with add & remove buttons
 - Start offline-capable
 - Maybe get CID from index's query param
-- Use generator for render
+- Use generator for render (like https://crank.js.org/)
 
 Notes:
 - Cluster -> pm2 and npm cluster don't work on stackblitz
