@@ -85,13 +85,14 @@ function serveAction(req, res) {
                     res.write(diff);
                     res.write('\nCHUNK_END\n');
                     repeats += 1;
-                    if (context.streaming <= 0) {
-                        break;
-                    } else {
+                    if (context.streaming()) {
                         context.reset();
-                        new_vdom = await render(state, null, context);
+                        new_vdom = await render(state, { t: 'SOLV_STREAMING' }, context);
+                    } else {
+                        break;
                     }
                 }
+                assert(repeats < 5, 'too many repeats while streaming', context);
 
                 state = JSON.stringify(state);
                 vdom = JSON.stringify(vdom);

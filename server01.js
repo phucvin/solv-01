@@ -83,8 +83,20 @@ export function createRenderContext() {
         reset: function () {
             this._nextId = 1;
         },
-        streaming: 0,
-        tasks: [],
+        _pendingTaskCount: 0,
+        _tasks: {},
+        streaming: function () { return this._pendingTaskCount > 0; },
+        addTask: function (tid, task) {
+            assert(this._tasks[tid] === undefined, 'task already exists', tid);
+            if (!task.isDone) {
+                this._pendingTaskCount += 1;
+                task = task.then((res) => { this._pendingTaskCount -= 1; return res; });
+            }
+            this._tasks[tid] = task;
+        },
+        getTaskIfAny: async function (tid) {
+            return this._tasks[tid] || Promise.resolve();
+        },
     };
 }
 
