@@ -8,10 +8,10 @@ node index.js
 ```
 
 TODOs:
-- Streaming diffs
 - List of counter components, with add & remove buttons
 - Start offline-capable
 - Maybe get CID from index's query param
+- Use generator for render
 
 Notes:
 - Cluster -> pm2 and npm cluster don't work on stackblitz
