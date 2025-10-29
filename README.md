@@ -9,7 +9,6 @@ node index.js
 
 TODOs:
 - Start offline-capable
-- Maybe get CID from index's query param
 - Use generator for render (like https://crank.js.org/)
 - Signals for render
 
