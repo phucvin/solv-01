@@ -9,6 +9,7 @@ node index.js
 
 TODOs:
 - Start offline-capable, probably with https://www.instantdb.com/
+- Multi-page App (MPA)
 - Use generator for render (like https://crank.js.org/)
 - Signals for render
 
