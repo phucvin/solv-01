@@ -72,6 +72,7 @@ function serveAction(req, res) {
                 res.end('[]');
             } else {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
+                
                 const context = createRenderContext();
                 let state = JSON.parse(row.state);
                 let vdom = JSON.parse(row.vdom);
@@ -79,20 +80,18 @@ function serveAction(req, res) {
                     let new_vdom = render(state, action, context);
                     let diff = JSON.stringify(diffList(vdom, new_vdom));
                     vdom = new_vdom;
-                    // res.write('BEGIN\n');
+                    res.write('CHUNK_BEGIN\n');
                     res.write(diff);
-                    // res.write('END\n');
+                    res.write('\nCHUNK_END\n');
                 } while (context.streaming);
+
                 state = JSON.stringify(state);
                 vdom = JSON.stringify(vdom);
                 db.run('UPDATE clients SET state = ?, vdom = ? WHERE cid = ?', [state, vdom, cid], (err) => {
                     if (err) {
                         console.error('Error updating clients with cid:', cid, err);
-                        res.writeHead(500, { 'Content-Type': 'application/json' });
-                        res.end('[]');
-                    } else {
-                        res.end();
                     }
+                    res.end();
                 });
 
             }

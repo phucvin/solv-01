@@ -159,9 +159,32 @@ $$$SOLV_SSR$$$
 
         try {
             const res = await fetch('/action', { method: 'POST', body: JSON.stringify(action) });
-            const diff = await res.json();
-            console.log('diff:', JSON.stringify(diff, null, 2));
-            apply(document.childNodes[0], diff);
+            if (!res.ok) {
+                console.error('Dispatch response error', res.status);
+            } else {
+                const reader = res.body.getReader();
+                const decoder = new TextDecoder('utf-8');
+                let result = '';
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) {
+                        break;
+                    }
+
+                    const chunk = decoder.decode(value, { stream: true });
+                    result += chunk;
+                    const CHUNK_BEGIN = 'CHUNK_BEGIN\n';
+                    const CHUNK_END = '\nCHUNK_END\n';
+                    const chunkEndIdx = result.indexOf(CHUNK_END);
+                    if (chunkEndIdx >= 0) {
+                        assert(result.startsWith(CHUNK_BEGIN));
+                        const diff = JSON.parse(result.substring(CHUNK_BEGIN.length, chunkEndIdx));
+                        console.log('diff:', JSON.stringify(diff, null, 2));
+                        apply(document.childNodes[0], diff);
+                        result = result.substring(chunkEndIdx + CHUNK_END.length + 1);
+                    }
+                }
+            }
         } catch (error) {
             console.error('Error dispatching', error);
         }
