@@ -4,10 +4,10 @@ import sqlite3 from 'sqlite3';
 
 import { diffList, createRenderContext, ssr } from './server01.js';
 
-import { render, initState } from './counter02/app.js';
+import { render, initState } from './counter03/app.js';
 import { assert } from 'console';
 
-const db = new sqlite3.Database('./counter02.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
+const db = new sqlite3.Database('./counter03.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE, (err) => {
     if (err) {
         console.error(err.message);
     } else {
@@ -28,7 +28,7 @@ const db = new sqlite3.Database('./counter02.db', sqlite3.OPEN_READWRITE | sqlit
 });
 
 async function serveIndex(req, res) {
-    const solvState = {};
+    const solvState = { nextIid: 1 };
     const context = createRenderContext(solvState);
     solvState.appState = initState(context);
     const vdom = await render(solvState.appState, null, context);

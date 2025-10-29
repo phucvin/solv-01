@@ -74,7 +74,7 @@ export function diffList(ls, rs) {
     );
 }
 
-export function createRenderContext(state) {
+export function createRenderContext(solvState) {
     return {
         _nextEid: 1,
         nextEid: function () {
@@ -84,12 +84,10 @@ export function createRenderContext(state) {
             this._nextEid = 1;
         },
 
-        _state: state,
+        _solvState: solvState,
         nextIid: function() {
-            if (!Number.isInteger(this._state._SOLV_nextIid)) {
-                this._state._SOLV_nextIid = 1;
-            }
-            return `_iid_${this._state._SOLV_nextIid}`;
+            assert(Number.isInteger(this._solvState.nextIid));
+            return `_iid_${this._solvState.nextIid++}`;
         },
 
         _pendingTaskCount: 0,
