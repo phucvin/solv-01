@@ -163,15 +163,11 @@ export function ssr(vdom) {
                 properties += ` ${prop}="${prop_val}"`;
             }
         }
-        if (vdom.children.length > 0) {
-            let children = '';
-            for (const child of vdom.children) {
-                children += ssr(child);
-            }
-            return `<${vdom.tag}${properties}>${children}</${vdom.tag}>`;
-        } else {
-            return `<${vdom.tag}${properties}/>`;
+        let children = '';
+        for (const child of vdom.children) {
+            children += ssr(child);
         }
+        return `<${vdom.tag}${properties}>${children}</${vdom.tag}>`;
     } else {
         assert(false, 'unknown vdom type', vdom);
     }
