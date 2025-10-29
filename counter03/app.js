@@ -13,6 +13,7 @@ export function initState(context) {
 
 export async function render(state, action, context) {
     const ADD_COUNTER = 'ADD_COUNTER';
+    const REMOVE_COUNTER = 'REMOVE_COUNTER';
 
     switch (action?.t) {
         case ADD_COUNTER:
@@ -22,11 +23,18 @@ export async function render(state, action, context) {
                 titleNum: state.counterTitleNextNum++,
             });
             break;
+        case REMOVE_COUNTER:
+            state.counters = state.counters.filter(info => info.iid !== action.p?.iid);
+            break;
     }
 
     let childCounters = [];
     for (const counterInfo of state.counters) {
-        const props = { iid: counterInfo.iid, title: `Counter #${counterInfo.titleNum}` };
+        const props = {
+            iid: counterInfo.iid,
+            title: `Counter #${counterInfo.titleNum}`,
+            removeAction: { t: REMOVE_COUNTER, p: { iid: counterInfo.iid }},
+        };
         childCounters.push(...await counter.render(counterInfo.state, action, context, props));
     }
 

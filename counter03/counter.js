@@ -4,7 +4,7 @@ export function initState(/*props*/ { startCount = 0 } = {}) {
     return { count: startCount };
 }
 
-export async function render(state, action, context, /*props*/ { iid, title }) {
+export async function render(state, action, context, /*props*/ { iid, title, removeAction }) {
     const INC = `_${iid}_INC`;
     const RESET = `_${iid}_RESET`;
 
@@ -22,13 +22,11 @@ export async function render(state, action, context, /*props*/ { iid, title }) {
             'div',
             {
                 class:
-                    'bg-white p-8 rounded-lg shadow-md flex flex-col items-center space-x-4 space-y-4',
+                    'relative bg-white p-8 rounded-lg shadow-md flex flex-col items-center space-x-4 space-y-4',
             },
             [
                 h('h1', { class: 'text-3xl font-bold mb-4' }, [text(title || 'untitled')]),
-                h('span', { class: 'text-5xl font-semibold text-gray-800"' }, [
-                    text(`${state.count}`),
-                ]),
+                h('span', { class: 'text-5xl font-semibold text-gray-800"' }, [text(`${state.count}`)]),
                 h(
                     'button',
                     {
@@ -48,6 +46,14 @@ export async function render(state, action, context, /*props*/ { iid, title }) {
                         onclick: state.count > 0 ? { t: RESET } : undefined,
                     },
                     [text('reset')]
+                ),
+                h(
+                    'button',
+                    {
+                        class: 'absolute top-0 right-0 p-2 m-2 text-red-500 hover:text-red-700',
+                        onclick: removeAction,
+                    },
+                    [text('x')]
                 ),
             ]
         ),
