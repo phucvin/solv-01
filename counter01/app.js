@@ -30,8 +30,8 @@ export function render(state, action, context) {
             break;
     }
 
-    const testId = state.count > 5 ? context.nextId() : undefined;
-    const modifiersId = context.nextId();
+    const testEid = state.count > 5 ? context.nextEid() : undefined;
+    const modifiersEid = context.nextEid();
 
     return [
         h('head', {}, [
@@ -42,7 +42,7 @@ export function render(state, action, context) {
             h(
                 'div',
                 {
-                    id: testId,
+                    id: testEid,
                     class:
                         'bg-white p-8 rounded-lg shadow-md flex flex-col items-center space-x-4 space-y-4',
                 },
@@ -59,7 +59,7 @@ export function render(state, action, context) {
                             onclick: {
                                 t: 'INC', p: {
                                     delta: 1,
-                                    modifiers: `JS:document.getElementById("${modifiersId}").value || undefined`,
+                                    modifiers: `JS:document.getElementById("${modifiersEid}").value || undefined`,
                                 }
                             },
                         },
@@ -77,7 +77,7 @@ export function render(state, action, context) {
                         [text('reset')]
                     ),
                     h('input', {
-                        id: modifiersId,
+                        id: modifiersEid,
                         type: 'text',
                         class: 'bg-gray-50 border border-gray-300',
                         style: 'text-align: center',

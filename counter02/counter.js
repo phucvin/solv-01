@@ -26,7 +26,7 @@ export async function render(state, action, context, /*props*/ { iid }) {
             break;
     }
 
-    const modifiersId = context.nextId();
+    const modifiersEid = context.nextEid();
 
     if (action?.t === RESET) {
         return [
@@ -61,7 +61,7 @@ export async function render(state, action, context, /*props*/ { iid }) {
                         onclick: {
                             t: INC, p: {
                                 delta: 1,
-                                modifiers: `JS:document.getElementById("${modifiersId}").value || undefined`,
+                                modifiers: `JS:document.getElementById("${modifiersEid}").value || undefined`,
                             }
                         },
                     },
@@ -79,7 +79,7 @@ export async function render(state, action, context, /*props*/ { iid }) {
                     [text('reset')]
                 ),
                 h('input', {
-                    id: modifiersId,
+                    id: modifiersEid,
                     type: 'text',
                     class: 'bg-gray-50 border border-gray-300',
                     style: 'text-align: center',
