@@ -9,6 +9,7 @@ node index.js
 
 TODOs:
 - List of counter components, with add & remove buttons
+- Queue client dispatch to avoid dispatching while processing previous response stream
 - Start offline-capable
 - Maybe get CID from index's query param
 - Use generator for render (like https://crank.js.org/)
