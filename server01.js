@@ -81,8 +81,8 @@ export function diffList(ls, rs) {
     };
     const lkeys = getKeys(ls);
     const rkeys = getKeys(rs);
-    console.log(lkeys, rkeys);
 
+    // NOTE: this doesn't work if a child is inserted into a middle
     let ld = 0, rd = 0;
     return Array.from({ length }).map((_, i) => {
         const l = ls[i + ld], r = rs[i + rd];
