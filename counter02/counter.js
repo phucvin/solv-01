@@ -9,8 +9,6 @@ export async function render(state, action, context, /*props*/ { iid }) {
     const RESET = `_${iid}_RESET`;
     const TASK_WAIT_ON_RESET = `_${iid}_task_wait_on_reset`;
 
-    let justReset = false;
-
     switch (action?.t) {
         case INC:
             let modifiers = 1;
@@ -21,8 +19,7 @@ export async function render(state, action, context, /*props*/ { iid }) {
             break;
         case RESET:
             state.count = 0;
-            justReset = true;
-            context.addTask(TASK_WAIT_ON_RESET, new Promise((resolve) => setTimeout(resolve, 2000)));
+            context.addTask(TASK_WAIT_ON_RESET, new Promise((resolve) => setTimeout(resolve, 1000)));
             break;
         case 'SOLV_STREAMING':
             await context.getTaskIfAny(TASK_WAIT_ON_RESET);
@@ -30,6 +27,19 @@ export async function render(state, action, context, /*props*/ { iid }) {
     }
 
     const modifiersId = context.nextId();
+
+    if (action?.t === RESET) {
+        return [
+            h(
+                'div',
+                {
+                    class:
+                        'bg-white p-8 rounded-lg shadow-md flex flex-col items-center space-x-4 space-y-4',
+                },
+                [text('RESETING...')]
+            ),
+        ];
+    }
 
     return [
         h(
@@ -74,7 +84,6 @@ export async function render(state, action, context, /*props*/ { iid }) {
                     class: 'bg-gray-50 border border-gray-300',
                     style: 'text-align: center',
                     placeholder: 'Modifiers',
-                    value: justReset ? '<just reseted>' : undefined,
                 }, []),
             ]
         ),
