@@ -1,4 +1,4 @@
-import { assert, h, text } from './../shared01.js';
+import { h, text } from './../shared01.js';
 
 export function initState(/*props*/ { startCount = 0 } = {}) {
     return { count: startCount };
