@@ -153,8 +153,15 @@ $$$SOLV_SSR$$$
         }
     }
 
-    // TODO: queue dispatch to avoid dispatching while processing previous response stream
+    let lastDispatch = Promise.resolve();
+
     async function dispatch(action) {
+        // Queue dispatch to avoid dispatching while processing previous response stream
+        await lastDispatch;
+        lastDispatch = dispatchRaw(action);
+    }
+
+    async function dispatchRaw(action) {
         executeActionJs(action);
         action.cid = SOLV_CID;
 
@@ -192,8 +199,7 @@ $$$SOLV_SSR$$$
     }
 
     // Pull latest (also keep alive) from server every 5s
-    // Re-enable after having queuing for dispatch
-    // setInterval(() => dispatch({t: 'KEEP_ALIVE'}), 5000);
+    setInterval(() => dispatch({t: 'KEEP_ALIVE'}), 5000);
 </script>
 
 </html>
