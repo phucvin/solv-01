@@ -8,15 +8,15 @@ export function initState() {
     };
 }
 
-export function render(state, action, context) {
+export async function render(state, action, context) {
     return [
         h('head', {}, [
             h('title', {}, [text('Counter 02 - Solv Prototype')]),
             h('script', { src: "https://cdn.tailwindcss.com" }, [text('')]),
         ]),
         h('body', { class: "flex flex-col space-y-4 items-center justify-center min-h-screen bg-gray-100" }, [
-            ...counter.render(state.c1.state, action, context, { iid: state.c1.iid }),
-            ...counter.render(state.c2.state, action, context, { iid: state.c2.iid }),
+            ...await counter.render(state.c1.state, action, context, { iid: state.c1.iid }),
+            ...await counter.render(state.c2.state, action, context, { iid: state.c2.iid }),
         ]),
     ];
 }

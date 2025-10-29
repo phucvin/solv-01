@@ -29,7 +29,7 @@ const db = new sqlite3.Database('./counter02.db', sqlite3.OPEN_READWRITE | sqlit
 
 async function serveIndex(req, res) {
     const state = initState();
-    const vdom = render(state, null, createRenderContext());
+    const vdom = await render(state, null, createRenderContext());
     db.run('INSERT INTO clients (state, vdom) VALUES (?, ?)',
         [JSON.stringify(state), JSON.stringify(vdom)],
         async function (err) {
@@ -65,7 +65,7 @@ function serveAction(req, res) {
         const cid = action.cid;
         assert(cid !== undefined, 'missing CID');
         console.log('action', action);
-        db.get('SELECT state, vdom FROM clients WHERE cid = ?', [cid], (err, row) => {
+        db.get('SELECT state, vdom FROM clients WHERE cid = ?', [cid], async (err, row) => {
             if (err || !row) {
                 console.error('Error getting from clients with cid:', cid, err);
                 res.writeHead(500, { 'Content-Type': 'application/json' });
@@ -77,7 +77,7 @@ function serveAction(req, res) {
                 let state = JSON.parse(row.state);
                 let vdom = JSON.parse(row.vdom);
                 do {
-                    let new_vdom = render(state, action, context);
+                    let new_vdom = await render(state, action, context);
                     let diff = JSON.stringify(diffList(vdom, new_vdom));
                     vdom = new_vdom;
                     res.write('CHUNK_BEGIN\n');

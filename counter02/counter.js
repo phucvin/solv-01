@@ -4,7 +4,7 @@ export function initState(/*props*/ { startCount = 0 } = {}) {
     return { count: startCount };
 }
 
-export function render(state, action, context, /*props*/ { iid }) {
+export async function render(state, action, context, /*props*/ { iid }) {
     const INC = `_${iid}_INC`;
     const RESET = `_${iid}_RESET`;
 
@@ -21,6 +21,10 @@ export function render(state, action, context, /*props*/ { iid }) {
         case RESET:
             state.count = 0;
             justReset = true;
+            context.streaming = true;
+            break;
+        default:
+            context.streaming = false;
             break;
     }
 
