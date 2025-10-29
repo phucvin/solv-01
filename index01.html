@@ -198,8 +198,8 @@ $$$SOLV_SSR$$$
         }
     }
 
-    // Pull latest (also keep alive) from server every 5s
-    setInterval(() => dispatch({t: 'KEEP_ALIVE'}), 5000);
+    // Pull latest (also keep alive) from server every 15s
+    setInterval(() => dispatch({t: 'SOLV_KA'}), 5000);
 </script>
 
 </html>
