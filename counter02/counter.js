@@ -1,13 +1,18 @@
-import { h, text } from './../shared01.js';
+import { assert, h, text } from './../shared01.js';
 
 export function initState(/*props*/ { startCount = 0 } = {}) {
     return { count: startCount };
 }
 
 export async function render(state, action, context, /*props*/ { iid }) {
+    const TASK1 = `_${iid}_task1`;
+    if (context.tasks[TASK1]) {
+        await context.tasks[TASK1];
+        context.streaming -= 1;
+    }
+
     const INC = `_${iid}_INC`;
     const RESET = `_${iid}_RESET`;
-    const TASK1 = `_${iid}_task1`;
 
     let justReset = false;
 
@@ -23,15 +28,8 @@ export async function render(state, action, context, /*props*/ { iid }) {
             state.count = 0;
             justReset = true;
             context.streaming += 1;
-            console.log('counter reset', context);
-            context[TASK1] = new Promise((resolve) => setTimeout(resolve, 2000));
-            break;
-        default:
-            if (context[TASK1]) {
-                await context[TASK1];
-                context.streaming -= 1;
-                console.log('task 1 done');
-            }
+            assert(context.tasks[TASK1] === undefined, 'already has task1');
+            context.tasks[TASK1] = new Promise((resolve) => setTimeout(resolve, 2000));
             break;
     }
 

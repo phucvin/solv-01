@@ -80,7 +80,11 @@ export function createRenderContext() {
         nextId: function () {
             return `solv-${this._nextId++}`;
         },
+        reset: function () {
+            this._nextId = 1;
+        },
         streaming: 0,
+        tasks: [],
     };
 }
 

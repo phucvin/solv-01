@@ -76,15 +76,22 @@ function serveAction(req, res) {
                 const context = createRenderContext();
                 let state = JSON.parse(row.state);
                 let vdom = JSON.parse(row.vdom);
-                do {
-                    let new_vdom = await render(state, action, context);
+                let new_vdom = await render(state, action, context);
+                let repeats = 0;
+                while (repeats < 5) {
                     let diff = JSON.stringify(diffList(vdom, new_vdom));
                     vdom = new_vdom;
                     res.write('CHUNK_BEGIN\n');
                     res.write(diff);
                     res.write('\nCHUNK_END\n');
-                    console.log('action', context);
-                } while (context.streaming > 0);
+                    repeats += 1;
+                    if (context.streaming <= 0) {
+                        break;
+                    } else {
+                        context.reset();
+                        new_vdom = await render(state, null, context);
+                    }
+                }
 
                 state = JSON.stringify(state);
                 vdom = JSON.stringify(vdom);
