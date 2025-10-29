@@ -5,6 +5,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@instantdb/admin": "^0.22.40",
+    "@instantdb/core": "^0.22.40",
     "sqlite3": "^5.1.7",
     "virtual-dom": "^2.1.1"
   }
