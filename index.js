@@ -35,7 +35,7 @@ async function serveIndex(req, res) {
     if (cid === undefined) {
         const solvState = { nextIid: 1 };
         const context = createRenderContext(solvState);
-        solvState.appState = initState(context);
+        solvState.appState = await initState(context);
         const vdom = await render(solvState.appState, null, context);
         db.run('INSERT INTO clients (state, vdom) VALUES (?, ?)',
             [JSON.stringify(solvState), JSON.stringify(vdom)],

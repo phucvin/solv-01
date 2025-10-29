@@ -10,8 +10,9 @@ const db = init({
     adminToken: process.env.INSTANT_APP_ADMIN_TOKEN,
 });
 
-export function initState(context) {
-    return {};
+export async function initState(context) {
+    const todos = (await db.query({ todos: {} })).todos || [];
+    return { todos };
 }
 
 export async function render(state, action, context) {
@@ -21,11 +22,16 @@ export async function render(state, action, context) {
     let adding = false;
     switch (action?.t) {
         case ADD_TODO:
-            context.addTask(TASK_ADD_TODO, db.transact([db.tx.todos[id()].create({
-                text: 'First one',
-                done: false,
-                createdAt: Date.now(),
-            })]));
+            const addAndQueryTodos = db.transact([
+                db.tx.todos[id()].create({
+                    text: 'First one',
+                    done: false,
+                    createdAt: Date.now(),
+                }),
+            ])
+                .then(() => db.query({ todos: {} }))
+                .then(({ todos }) => { state.todos = todos; });
+            context.addTask(TASK_ADD_TODO, addAndQueryTodos);
             adding = true;
             break;
         case 'SOLV_STREAMING':
@@ -33,7 +39,7 @@ export async function render(state, action, context) {
     }
 
     let todos = [];
-    for (const todo of (await db.query({ todos: {} })).todos) {
+    for (const todo of state.todos) {
         const props = {
             iid: todo.id,
             text: todo.text,
