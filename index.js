@@ -28,10 +28,12 @@ const db = new sqlite3.Database('./counter02.db', sqlite3.OPEN_READWRITE | sqlit
 });
 
 async function serveIndex(req, res) {
-    const state = initState();
-    const vdom = await render(state, null, createRenderContext());
+    const solvState = {};
+    const context = createRenderContext(solvState);
+    solvState.appState = initState(context);
+    const vdom = await render(solvState.appState, null, context);
     db.run('INSERT INTO clients (state, vdom) VALUES (?, ?)',
-        [JSON.stringify(state), JSON.stringify(vdom)],
+        [JSON.stringify(solvState), JSON.stringify(vdom)],
         async function (err) {
             if (err) {
                 console.error('Error insert into clients:', err);
@@ -73,10 +75,10 @@ function serveAction(req, res) {
             } else {
                 res.writeHead(200, { 'Content-Type': 'application/json' });
                 
-                const context = createRenderContext();
-                let state = JSON.parse(row.state);
+                let solvState = JSON.parse(row.state);
                 let vdom = JSON.parse(row.vdom);
-                let new_vdom = await render(state, action, context);
+                const context = createRenderContext(solvState);
+                let new_vdom = await render(solvState.appState, action, context);
                 let repeats = 0;
                 while (repeats < 5) {
                     let diff = JSON.stringify(diffList(vdom, new_vdom));
@@ -85,16 +87,16 @@ function serveAction(req, res) {
                     repeats += 1;
                     if (context.streaming()) {
                         context.reset();
-                        new_vdom = await render(state, { t: 'SOLV_STREAMING' }, context);
+                        new_vdom = await render(solvState.appState, { t: 'SOLV_STREAMING' }, context);
                     } else {
                         break;
                     }
                 }
                 assert(repeats < 5, 'too many repeats while streaming', context);
 
-                state = JSON.stringify(state);
+                solvState = JSON.stringify(solvState);
                 vdom = JSON.stringify(vdom);
-                db.run('UPDATE clients SET state = ?, vdom = ? WHERE cid = ?', [state, vdom, cid], (err) => {
+                db.run('UPDATE clients SET state = ?, vdom = ? WHERE cid = ?', [solvState, vdom, cid], (err) => {
                     if (err) {
                         console.error('Error updating clients with cid:', cid, err);
                     }

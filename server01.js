@@ -74,11 +74,18 @@ export function diffList(ls, rs) {
     );
 }
 
-export function createRenderContext() {
+export function createRenderContext(state) {
     return {
         _nextId: 1,
         nextId: function () {
             return `solv-${this._nextId++}`;
+        },
+        _state: state,
+        nextIid: function() {
+            if (!Number.isInteger(this._state._SOLV_nextIid)) {
+                this._state._SOLV_nextIid = 1;
+            }
+            return `_iid_${this._state._SOLV_nextIid}`;
         },
         reset: function () {
             this._nextId = 1;
