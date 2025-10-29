@@ -10,8 +10,18 @@ let db = init({
 });
 db = db.asUser({ guest: true });
 
+const todosQuery = {
+    todos: {
+        $: {
+            order: {
+                serverCreatedAt: 'asc',
+            },
+        },
+    },
+};
+
 export async function initState(context) {
-    const todos = (await db.query({ todos: {} })).todos || [];
+    const todos = (await db.query(todosQuery)).todos || [];
     return { todos };
 }
 
@@ -34,15 +44,15 @@ export async function render(state, action, context) {
                     createdAt: Date.now(),
                 }),
             ])
-                .then(() => db.query({ todos: {} }))
+                .then(() => db.query(todosQuery))
                 .then(({ todos }) => { state.todos = todos; });
             context.addTask(ADD_TODO, addAndQueryTodos);
             adding = true;
             break;
         case REMOVE_ALL_TODO:
-            const queryAndDelete = db.query({ todos: {} })
+            const queryAndDelete = db.query(todosQuery)
                 .then(({ todos }) => db.transact(todos.map((t) => db.tx.todos[t.id].delete())))
-                .then(() => db.query({ todos: {} }))
+                .then(() => db.query(todosQuery))
                 .then(({ todos }) => { state.todos = todos; });
             context.addTask(REMOVE_ALL_TODO, queryAndDelete);
             removingAll = true;
