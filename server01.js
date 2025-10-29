@@ -80,6 +80,7 @@ export function createRenderContext() {
         nextId: function () {
             return `solv-${this._nextId++}`;
         },
+        streaming: false,
     };
 }
 
