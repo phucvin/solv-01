@@ -4,7 +4,7 @@ export function initState(/*props*/ { startCount = 0 } = {}) {
     return { count: startCount };
 }
 
-export async function render(state, action, context, /*props*/ { iid }) {
+export async function render(state, action, context, /*props*/ { iid, title }) {
     const INC = `_${iid}_INC`;
     const RESET = `_${iid}_RESET`;
 
@@ -25,7 +25,7 @@ export async function render(state, action, context, /*props*/ { iid }) {
                     'bg-white p-8 rounded-lg shadow-md flex flex-col items-center space-x-4 space-y-4',
             },
             [
-                h('h1', { class: 'text-3xl font-bold mb-4' }, [text('Counter Component')]),
+                h('h1', { class: 'text-3xl font-bold mb-4' }, [text(title || 'untitled')]),
                 h('span', { class: 'text-5xl font-semibold text-gray-800"' }, [
                     text(`${state.count}`),
                 ]),
