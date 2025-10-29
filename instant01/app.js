@@ -5,10 +5,10 @@ import * as Todo from './todo.js';
 
 // InstantDB
 const APP_ID = "1ca21621-df0d-4e36-a063-d6a230b491fe";
-const db = init({
+let db = init({
     appId: APP_ID,
-    adminToken: process.env.INSTANT_APP_ADMIN_TOKEN,
 });
+db = db.asUser({ guest: true });
 
 export async function initState(context) {
     const todos = (await db.query({ todos: {} })).todos || [];
