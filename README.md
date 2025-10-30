@@ -12,6 +12,7 @@ TODOs:
 - Multi-page App (MPA)
 - Use generator for render (like https://crank.js.org/)
 - Signals for render
+- Optimize vdom serde, potentialy zero-copy parsing
 
 Notes:
 - Cluster -> pm2 and npm cluster don't work on stackblitz
