@@ -8,7 +8,8 @@ node index.js
 ```
 
 TODOs:
-- Start offline-capable, probably with https://www.instantdb.com/
+- Use express for routing to multiple apps
+- Start offline-capable using service worker intercepting fetch
 - Multi-page App (MPA)
 - Use generator for render (like https://crank.js.org/)
 - Signals for render
