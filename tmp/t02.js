@@ -42,6 +42,25 @@ function Counter(props, ctx) {
     resetBtn.innerHTML.value = 'reset';
     resetBtn.onclick.value = { t: 'reset' };
     el.children.value = [state.countTxt, incBtn, resetBtn];
-    
+
     return { c: 'Counter', state, el, act: CounterAct, effects: CounterEffects };
 }
+
+// Ideal Solid-like code that can be compiled to above
+const Counter = ({ baseCount }) => {
+    const [count, setCount] = createSignals();
+    const disabled = createMemo(() => count() < baseCount() + 10);
+
+    return (
+        <div>
+            <span>{baseCount() + count()}</span>
+            <button onclick={() => setCount(count() + 1)}>inc</button>
+            <button
+                disabled={disabled()}
+                className={`bg-red ${disabled ? 'disabled' : ''}`}
+                onclick={() => setCount(baseCount())}>
+                reset
+            </button>
+        </div>
+    );
+};
