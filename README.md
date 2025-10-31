@@ -8,7 +8,8 @@ node index.js
 ```
 
 TODOs:
-- Support stable element (doesn't need diffing after created and until removed), which is good for long content (e.g. blog post).
+- Support stable element (doesn't need diffing after created and until removed), which is good for long content (e.g. blog post)
+- Remove state & vdom on server on client disconnect (using https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon)
 - Use express for routing to multiple apps
 - Start offline-capable using service worker intercepting fetch (refs: https://github.com/richardanaya/wasm-service, https://github.com/kjartanm/htmx-sw)
 - Multi-page App (MPA)
