@@ -9,7 +9,7 @@ node index.js
 
 TODOs:
 - Use express for routing to multiple apps
-- Start offline-capable using service worker intercepting fetch
+- Start offline-capable using service worker intercepting fetch (refs: https://github.com/richardanaya/wasm-service, https://github.com/kjartanm/htmx-sw)
 - Multi-page App (MPA)
 - Use generator for render (like https://crank.js.org/)
 - Signals for render
