@@ -8,6 +8,7 @@ node index.js
 ```
 
 TODOs:
+- Support stable element (doesn't need diffing after created and until removed), which is good for long content (e.g. blog post).
 - Use express for routing to multiple apps
 - Start offline-capable using service worker intercepting fetch (refs: https://github.com/richardanaya/wasm-service, https://github.com/kjartanm/htmx-sw)
 - Multi-page App (MPA)
