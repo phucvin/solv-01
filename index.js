@@ -110,7 +110,7 @@ function serveAction(req, res) {
                 while (repeats < 5) {
                     let diff = JSON.stringify(diffList(vdom, new_vdom));
                     vdom = new_vdom;
-                    res.write(`CHUNK_BEGIN\n${diff}\nCHUNK_END\n`);
+                    res.write(`|CHUNK_BEGIN>${diff}<CHUNK_END|`);
                     repeats += 1;
                     if (context.streaming()) {
                         context.reset();

@@ -184,15 +184,17 @@ $$$SOLV_SSR$$$
 
                     const chunk = decoder.decode(value, { stream: true });
                     result += chunk;
-                    const CHUNK_BEGIN = 'CHUNK_BEGIN\n';
-                    const CHUNK_END = '\nCHUNK_END\n';
-                    const chunkEndIdx = result.indexOf(CHUNK_END);
-                    if (chunkEndIdx >= 0) {
+                    const CHUNK_BEGIN = '|CHUNK_BEGIN>';
+                    const CHUNK_END = '<CHUNK_END|';
+                    let chunkEndIdx = result.indexOf(CHUNK_END);
+                    while (chunkEndIdx >= 0) {
                         assert(result.startsWith(CHUNK_BEGIN));
                         const diff = JSON.parse(result.substring(CHUNK_BEGIN.length, chunkEndIdx));
                         console.log('diff:', JSON.stringify(diff, null, 2));
                         apply(document.childNodes[0], diff);
-                        result = result.substring(chunkEndIdx + CHUNK_END.length + 1);
+                        result = result.substring(chunkEndIdx + CHUNK_END.length);
+                        // Find next chunk
+                        chunkEndIdx = result.indexOf(CHUNK_END);
                     }
                 }
             }
@@ -202,7 +204,7 @@ $$$SOLV_SSR$$$
     }
 
     // Pull latest (also keep alive) from server every 15s
-    setInterval(() => dispatch({t: 'SOLV_KA'}), 5000);
+    setInterval(() => dispatch({t: 'SOLV_KA'}), 15000);
 </script>
 
 </html>
