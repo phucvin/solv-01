@@ -8,6 +8,7 @@
     "@instantdb/admin": "^0.22.40",
     "@instantdb/core": "^0.22.40",
     "sqlite3": "^5.1.7",
-    "virtual-dom": "^2.1.1"
+    "virtual-dom": "^2.1.1",
+    "wrangler": "^4.45.3"
   }
 }
