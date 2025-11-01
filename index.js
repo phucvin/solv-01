@@ -4,7 +4,7 @@ import fs from 'fs';
 import { httpServerHandler } from 'cloudflare:node';
 
 import { diffList, createRenderContext, ssr } from './server01.js';
-import * as cache from './cache01.js';
+import * as cache from './cache02.js';
 
 import { render, initState } from './instant01/app.js';
 import { assert } from 'console';
