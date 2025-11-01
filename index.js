@@ -1,6 +1,7 @@
 import http from 'http';
 import url from 'url';
 import fs from 'fs';
+import { httpServerHandler } from 'cloudflare:node';
 
 import { diffList, createRenderContext, ssr } from './server01.js';
 import * as cache from './cache01.js';
@@ -128,3 +129,5 @@ const PORT = 3000;
 server.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}/`);
 });
+
+export default httpServerHandler({ port: PORT });

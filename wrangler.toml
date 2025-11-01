@@ -1,3 +1,4 @@
 name = "shy-disk-b6d8"
 main = "index.js"
 compatibility_date = "2025-11-01"
+compatibility_flags = ["nodejs_compat"]
