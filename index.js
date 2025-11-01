@@ -1,10 +1,10 @@
 import http from 'http';
 import url from 'url';
-import fs from 'fs';
 import { httpServerHandler } from 'cloudflare:node';
 
 import { diffList, createRenderContext, ssr } from './server01.js';
 import * as cache from './cache02.js';
+import indexTemplate from './index01.html';
 
 import { render, initState } from './instant01/app.js';
 import { assert } from 'console';
@@ -28,17 +28,11 @@ async function serveIndex(req, res) {
             res.end('<h1>Internal Error</h1>');
         }
 
-        try {
-            let html = await fs.promises.readFile('./index01.html', 'utf8');
-            html = html.replace('$$$SOLV_SSR$$$', ssr(vdom));
-            html = html.replace('$$$SOLV_CID$$$', cid);
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(html);
-        } catch (err) {
-            console.error('Error reading index html and injecting SSR:', err);
-            res.writeHead(500, { 'Content-Type': 'text/html' });
-            res.end('<h1>Internal Error</h1>');
-        }
+        let html = indexTemplate;
+        html = html.replace('$$$SOLV_SSR$$$', ssr(vdom));
+        html = html.replace('$$$SOLV_CID$$$', cid);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
 
     } else {  // Has cid
 
@@ -50,17 +44,12 @@ async function serveIndex(req, res) {
             res.writeHead(500, { 'Content-Type': 'text/html' });
             res.end('<h1>Internal Error</h1>');
         }
-        try {
-            let html = await fs.promises.readFile('./index01.html', 'utf8');
-            html = html.replace('$$$SOLV_SSR$$$', ssr(vdom));
-            html = html.replace('$$$SOLV_CID$$$', cid);
-            res.writeHead(200, { 'Content-Type': 'text/html' });
-            res.end(html);
-        } catch (err) {
-            console.error('Error reading index html and injecting SSR:', err);
-            res.writeHead(500, { 'Content-Type': 'text/html' });
-            res.end('<h1>Internal Error</h1>');
-        }
+
+        let html = indexTemplate;
+        html = html.replace('$$$SOLV_SSR$$$', ssr(vdom));
+        html = html.replace('$$$SOLV_CID$$$', cid);
+        res.writeHead(200, { 'Content-Type': 'text/html' });
+        res.end(html);
     } 
 }
 
