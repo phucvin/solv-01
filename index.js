@@ -3,7 +3,7 @@ import url from 'url';
 import { httpServerHandler } from 'cloudflare:node';
 
 import { diffList, createRenderContext, ssr } from './server01.js';
-import * as cache from './cache02.js';
+import * as cache from './cache03.js';
 import indexTemplate from './index01.html';
 
 import { render, initState } from './instant01/app.js';
