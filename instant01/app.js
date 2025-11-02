@@ -75,7 +75,7 @@ export async function render(state, action, context) {
 
     return [
         h('head', {}, [
-            h('title', {}, [text('Instant 01 - Solv Prototype')]),
+            h('title', {}, [text('[workers] Instant 01 - Solv Prototype')]),
             h('script', { src: "https://cdn.tailwindcss.com" }, [text('')]),
         ]),
         h('body', { class: "flex flex-col space-y-4 items-center justify-center min-h-screen bg-gray-100" }, [

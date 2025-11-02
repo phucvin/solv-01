@@ -1,5 +1,20 @@
 # Stateless Offline-capable LiveView (Solv) Prototype 01
 
+## Branch: workers
+
+Live: https://shy-disk-b6d8.phucvin.workers.dev/
+
+To deploy:
+```
+npm install -g wrangler
+wrangler login --browser=false
+curl "<paste redirected URL after granting permission>"
+wranger deploy
+```
+
+
+## Branch: main
+
 [Edit in StackBlitz next generation editor ⚡️](https://stackblitz.com/~/github.com/phucvin/solv-01)
 
 To run:
