@@ -17,6 +17,7 @@ TODOs:
 - Optimize vdom serde, potentialy zero-copy parsing
 - Client can keep the state & vdom (patched with every diff sent from server) to send it back to the server if the server responded 'I lost your state & vdom' (e.g. removed from cache).
 - Pre-recorded diff (refs: https://docs.kweb.io/book/events.html#immediate-events)
+- Try blockdom
 
 Notes:
 - Cluster -> pm2 and npm cluster don't work on stackblitz
