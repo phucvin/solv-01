@@ -46,7 +46,7 @@ async function serveIndex(req, res) {
         }
 
         const context = createRenderContext(solvState);
-        vdom = await render(solvState.appState, null, context);
+        const vdom = await render(solvState.appState, null, context);
 
         let html = indexTemplate;
         html = html.replace('$$$SOLV_SSR$$$', ssr(vdom));
