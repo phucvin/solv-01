@@ -43,6 +43,7 @@ async function serveIndex(req, res) {
             console.error('Error getting from clients with cid:', cid, err, row);
             res.writeHead(500, { 'Content-Type': 'text/html' });
             res.end('<h1>Internal Error</h1>');
+            return;
         }
 
         const context = createRenderContext(solvState);
