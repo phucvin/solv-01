@@ -21,7 +21,7 @@ async function serveIndex(req, res) {
 
         let cid;
         try {
-            cid = await cache.insert(solvState);
+            cid = await cache.insert(solvState, vdom);
         } catch (err) {
             console.error('Error insert into clients:', err);
             res.writeHead(500, { 'Content-Type': 'text/html' });
@@ -36,17 +36,14 @@ async function serveIndex(req, res) {
 
     } else {  // Has cid
 
-        let solvState;
+        let vdom;
         try {
-            ({ solvState } = await cache.get(cid));
+            ({ vdom } = await cache.get(cid));
         } catch (err) {
             console.error('Error getting from clients with cid:', cid, err, row);
             res.writeHead(500, { 'Content-Type': 'text/html' });
             res.end('<h1>Internal Error</h1>');
         }
-
-        const context = createRenderContext(solvState);
-        vdom = await render(solvState.appState, null, context);
 
         let html = indexTemplate;
         html = html.replace('$$$SOLV_SSR$$$', ssr(vdom));
@@ -74,12 +71,11 @@ async function serveAction(req, res) {
 
     let solvState, vdom;
     try {
-        ({ solvState } = await cache.get(cid));
-        const context = createRenderContext(solvState);
-        vdom = await render(solvState.appState, null, context);
+        ({ solvState, vdom } = await cache.get(cid));
 
         res.writeHead(200, { 'Content-Type': 'application/json' });
         
+        const context = createRenderContext(solvState);
         let new_vdom = await render(solvState.appState, action, context);
         let repeats = 0;
         while (repeats < 5) {
@@ -103,7 +99,7 @@ async function serveAction(req, res) {
     }
 
     try {
-        await cache.update(cid, solvState);
+        await cache.update(cid, solvState, vdom);
         res.end();
     } catch (err) {
         console.error('Error updating clients with cid:', cid, err);
