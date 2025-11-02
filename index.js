@@ -38,7 +38,7 @@ async function serveIndex(req, res) {
 
         let vdom;
         try {
-            ({ vdom } = cache.get(cid));
+            ({ vdom } = await cache.get(cid));
         } catch (err) {
             console.error('Error getting from clients with cid:', cid, err, row);
             res.writeHead(500, { 'Content-Type': 'text/html' });
