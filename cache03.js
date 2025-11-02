@@ -6,7 +6,7 @@ const toRequest = (cid) => new Request(`http://${cid}`);
 
 export async function insert(solvState, vdom) {
     const cid = randomUUID();
-    cache.put(toRequest(cid), new Response(JSON.stringify({ solvState, vdom })));
+    await cache.put(toRequest(cid), new Response(JSON.stringify({ solvState, vdom })));
     return cid;
 }
 
