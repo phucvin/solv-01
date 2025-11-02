@@ -20,7 +20,7 @@ const db = new sqlite3.Database('./instant01.db', sqlite3.OPEN_READWRITE | sqlit
     }
 });
 
-export function insert(solvState, vdom) {
+export function insert(solvState, vdom = {}) {
     return new Promise((resolve, reject) =>
         db.run('INSERT INTO clients (state, vdom) VALUES (?, ?)',
             [JSON.stringify(solvState), JSON.stringify(vdom)],
@@ -44,7 +44,7 @@ export function get(cid) {
         }));
 }
 
-export function update(cid, solvState, vdom) {
+export function update(cid, solvState, vdom = {}) {
     solvState = JSON.stringify(solvState);
     vdom = JSON.stringify(vdom);
     return new Promise((resolve, reject) =>
