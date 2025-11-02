@@ -103,7 +103,6 @@ function resolvePendingSignals(ctx) {
 let ctx = {
     sigs: { 7: 10 },
     pendingSigs: [],
-    els: {},
     cmds: [],
     effs: {},
     elRemoval: {},
@@ -136,12 +135,15 @@ ctx == {
         2: {
             sigs: [1],
             effs: [9, 10],
-            els: [8, 3, 5],
         },
     }
 };
 // After inc clicked
 ctx == {
+    sigs: {
+        1: 2,
+        7: 10,
+    },
     pendingSigs: [1],
     cmds: [],
     // others are the same
@@ -152,11 +154,9 @@ ctx == {
         1: 2,
         7: 10,
     },
-    els: same,
     pendingSigs: [],
     cmds: [
         [{ t: 'el', id: 8 }, 'innerHtml', 11],
     ],
-    effs: same,
-    elRemoval: same,
+    // others are the same
 };
