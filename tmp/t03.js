@@ -47,15 +47,13 @@ function runEff(eff, ctx) {
                 },
                 set value(x) {
                     ctx.sigs[arg.id] = x;
-                    if (ctx.pendingSigs[-1] != arg.id) {
-                        ctx.pendingSigs.push(arg.id);
-                    }
+                    ctx.pendingSigs[arg.id] = 1;
                 },
             });
         } else if (arg.t == 'el') {
             args.push(new Proxy({ t: 'el', id: arg.id }, {
                 set(obj, name, newValue) {
-                    ctx.cmds.push([{ t: obj.t, id: obj.id }, name, newValue]);
+                    ctx.mods[obj.id][name] = newValue;
                 }
             }));
         }
@@ -74,10 +72,11 @@ function build(comp, props, ctx) {
     const effs = []
     const ctx2 = {
         el: (tag) => {
-            ctx.cmds.push([{ t: 'el', id: ctx.nextId() }, '$create', tag]);
+            const id = ctx.nextId();
+            ctx.mods[id]['$create'] = { tag };
             return new Proxy({}, {
                 set(obj, name, newValue) {
-                    ctx.cmds.push([{ t: obj.t, id: obj.id }, name, newValue]);
+                    ctx.mods[id][name] = newValue;
                 }
             });
         },
@@ -91,7 +90,7 @@ function build(comp, props, ctx) {
     for (const eff of effs) {
         runEff(eff, ctx);
     }
-    
+
     resolvePendingSignals(ctx);
     return el;
 }
@@ -102,31 +101,36 @@ function resolvePendingSignals(ctx) {
 
 let ctx = {
     sigs: { 7: 10 },
-    pendingSigs: [],
-    cmds: [],
+    pendingSigs: {},
+    mods: {},
     effs: {},
     elRemoval: {},
 };
-build(Counter, { baseCount: { t: 's', id: 10 }}, ctx) == { t: 'el', id: 2 };
+build(Counter, { baseCount: { t: 's', id: 10 } }, ctx) == { t: 'el', id: 2 };
 ctx == {
     sigs: {
         1: 0,
         7: 10,
     },
-    cmds: [  // can probably remove prefix `{ t: 'el'` since it's always that
-        [{ t: 'el', id: 2 }, '$create', 'div'],
-        [{ t: 'el', id: 8 }, '$create', 'span'],
-        [{ t: 'el', id: 3 }, '$create', 'button'],
-        [{ t: 'el', id: 5 }, '$create', 'button'],
-        [{ t: 'el', id: 3 }, 'innerHtml', 'inc'],
-        [{ t: 'el', id: 3 }, 'onclick', [{ t: 'a', id: 4 }, { t: 's', id: 1 }]],
-        [{ t: 'el', id: 5 }, 'innerHtml', 'reset'],
-        [{ t: 'el', id: 5 }, 'onclick', [{ t: 'a', id: 6 }, { t: 's', id: 1 }, { t: 's', id: 7 }]],
-        [{ t: 'el', id: 2 }, 'children', [{ t: 'el', id: 8 }, { t: 'el', id: 3 }, { t: 'el', id: 5 }]],
-        [{ t: 'el', id: 8 }, 'innerHtml', 10],
-        [{ t: 'el', id: 5 }, 'disabled', true],
-        [{ t: 'el', id: 5 }, 'class', 'bg-red disabled'],
-    ],
+    mods: {
+        2: {
+            '$create': { tag: 'div' },
+            children: [{ t: 'el', id: 8 }, { t: 'el', id: 3 }, { t: 'el', id: 5 }],
+        },
+        3: {
+            '$create': { tag: 'button' },
+            innerHTML: 'inc',
+            onclick: [{ t: 'a', id: 4 }, { t: 's', id: 1 }],
+        },
+        5: {
+            '$create': { tag: 'button' },
+            innerHTML: 'reset',
+            disabled: true,
+            class: 'bg-red disabled',
+            onclick: [{ t: 'a', id: 6 }, { t: 's', id: 1 }, { t: 's', id: 7 }],
+        },
+        8: { '$create': { tag: 'span' }, innerHTML: 10},
+    },
     effs: {
         9: ['e_updateTxt', { t: 's', id: 1 }, { t: 's', id: 7 }, { t: 'el', id: 8 }],
         10: ['e_disable', { t: 's', id: 1 }, { t: 's', id: 7 }, { t: 'el', id: 5 }],
@@ -144,8 +148,8 @@ ctx == {
         1: 2,
         7: 10,
     },
-    pendingSigs: [1],
-    cmds: [],
+    pendingSigs: { 1: 1 },
+    mods: {},
     // others are the same
 };
 // After resolving pending signals
@@ -154,9 +158,9 @@ ctx == {
         1: 2,
         7: 10,
     },
-    pendingSigs: [],
-    cmds: [
-        [{ t: 'el', id: 8 }, 'innerHtml', 11],
-    ],
+    pendingSigs: {},
+    mods: {
+        8: { innerHTML: 11 },
+    },
     // others are the same
 };
